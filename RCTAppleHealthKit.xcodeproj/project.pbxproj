@@ -69,7 +69,6 @@
 		64C42D491D351A8800A0A8F7 /* RCTAppleHealthKit+Methods_Vitals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTAppleHealthKit+Methods_Vitals.m"; sourceTree = "<group>"; };
 		64E0E73D1D37947B00EAB905 /* RCTAppleHealthKit+Methods_Results.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTAppleHealthKit+Methods_Results.h"; sourceTree = "<group>"; };
 		64E0E73E1D37947B00EAB905 /* RCTAppleHealthKit+Methods_Results.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTAppleHealthKit+Methods_Results.m"; sourceTree = "<group>"; };
-/* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3774C88A1D2092F20000B3F3 /* Frameworks */ = {
@@ -101,8 +100,6 @@
 		3774C88F1D2092F20000B3F3 /* RCTAppleHealthKit */ = {
 			isa = PBXGroup;
 			children = (
-				94ECDB3F26351A1400DC5A07 /* RCTAppleHealthKit+Methods_Dietary.h */,
-				94ECDB4026351A1400DC5A07 /* RCTAppleHealthKit+Methods_Dietary.m */,
 				9483E3322608035B000EAB68 /* Swift */,
 				4F8095C72523C39D00A84ADB /* RCTAppleHealthKit+Methods_LabTests.h */,
 				4F8095C82523C39D00A84ADB /* RCTAppleHealthKit+Methods_LabTests.m */,
@@ -146,9 +143,6 @@
 			isa = PBXGroup;
 			children = (
 				94BB91762614002B00ED380F /* RNAppleHealthKit.swift */,
-				94ECDB0E2634D52900DC5A07 /* RNAppleHealthKit+Utils.swift */,
-				94BB91752614002B00ED380F /* RCTAppleHealthKit-Bridging-Header.h */,
-				94024FB5263E3CC30023397C /* RNAppleHealthKit+Types.swift */,
 			);
 			path = Swift;
 			sourceTree = "<group>";
