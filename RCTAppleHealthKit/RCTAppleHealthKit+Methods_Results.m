@@ -18,13 +18,9 @@
 {
     HKQuantityType *bloodGlucoseType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodGlucose];
 
-    HKUnit *mmoLPerL = [[HKUnit moleUnitWithMetricPrefix:HKMetricPrefixMilli molarMass:HKUnitMolarMassBloodGlucose] unitDividedByUnit:[HKUnit literUnit]];
-    
-    HKUnit *mgPerdL = [[HKUnit gramUnitWithMetricPrefix:HKMetricPrefixMilli] unitDividedByUnit:[HKUnit literUnitWithMetricPrefix:HKMetricPrefixDeci]];
+    HKUnit *mmolPerL = [[HKUnit moleUnitWithMetricPrefix:HKMetricPrefixMilli molarMass:HKUnitMolarMassBloodGlucose] unitDividedByUnit:[HKUnit literUnit]];
 
-    
-
-    HKUnit *unit = [RCTAppleHealthKit stringFromOptions:input key:@"unit" withDefault:mgPerdL];
+    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:mmolPerL];
     NSUInteger limit = [RCTAppleHealthKit uintFromOptions:input key:@"limit" withDefault:HKObjectQueryNoLimit];
     BOOL ascending = [RCTAppleHealthKit boolFromOptions:input key:@"ascending" withDefault:false];
     NSDate *startDate = [self.rnAppleHealthKit dateFrom:input key:@"startDate" defaultDate:nil];
@@ -87,17 +83,16 @@
 {
     HKQuantityType *bloodGlucoseType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodGlucose];
 
-    HKUnit *mmoLPerL = [[HKUnit moleUnitWithMetricPrefix:HKMetricPrefixMilli molarMass:HKUnitMolarMassBloodGlucose] unitDividedByUnit:[HKUnit literUnit]];
+    HKUnit *mmolPerL = [[HKUnit moleUnitWithMetricPrefix:HKMetricPrefixMilli molarMass:HKUnitMolarMassBloodGlucose] unitDividedByUnit:[HKUnit literUnit]];
 
-    HKUnit *mgPerdL = [[HKUnit gramUnitWithMetricPrefix:HKMetricPrefixMilli] unitDividedByUnit:[HKUnit literUnitWithMetricPrefix:HKMetricPrefixDeci]];
-
-    double value = [[input objectForKey:@"value"] doubleValue];
-    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"date" defaultDate:[NSDate date]];
-    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:mgPerdL];
 
 
     HKQuantity *glucoseQuantity = [HKQuantity quantityWithUnit:unit doubleValue:value];
-    HKQuantitySample *glucoseSample = [HKQuantitySample quantitySampleWithType:bloodGlucoseType quantity:glucoseQuantity startDate:sampleDate endDate:sampleDate];
+    HKQuantitySample *glucoseSample = [HKQuantitySample quantitySampleWithType:bloodGlucoseType
+                                                                      quantity:glucoseQuantity
+                                                                     startDate:startDate
+                                                                       endDate:endDate
+                                                                      metadata:metadata];
 
     [self.rnAppleHealthKit.healthStore saveObject:glucoseSample withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
@@ -105,7 +100,7 @@
             callback(@[RCTMakeError(@"An error occured while saving the glucose sample", error, nil)]);
             return;
         }
-        callback(@[[NSNull null], @(value)]);
+        callback(@[[NSNull null], [glucoseSample.UUID UUIDString]]);
     }];
 }
 
@@ -113,13 +108,13 @@
 {
     HKQuantityType *carbohydratesType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierDietaryCarbohydrates];
 
-    double value = [[input objectForKey:@"value"] doubleValue];
-    NSDate *sampleDate = [self.rnAppleHealthKit dateFrom:input key:@"date" defaultDate:[NSDate date]];
-    HKUnit *unit = [self.rnAppleHealthKit hkUnitFrom:input with:@"unit" defaultValue:[HKUnit gramUnit]];
-
 
     HKQuantity *carbQuantity = [HKQuantity quantityWithUnit:unit doubleValue:value];
-    HKQuantitySample *carbSample = [HKQuantitySample quantitySampleWithType:carbohydratesType quantity:carbQuantity startDate:sampleDate endDate:sampleDate];
+    HKQuantitySample *carbSample = [HKQuantitySample quantitySampleWithType:carbohydratesType
+                                                                   quantity:carbQuantity
+                                                                  startDate:sampleDate
+                                                                    endDate:sampleDate
+                                                                   metadata:metadata];
 
     [self.rnAppleHealthKit.healthStore saveObject:carbSample withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
@@ -127,7 +122,37 @@
             callback(@[RCTMakeError(@"An error occured while saving the carbohydrate sample", error, nil)]);
             return;
         }
-        callback(@[[NSNull null], @(value)]);
+        callback(@[[NSNull null], [carbSample.UUID UUIDString]]);
+    }];
+}
+
+- (void)results_deleteBloodGlucoseSample:(NSString *)oid callback:(RCTResponseSenderBlock)callback
+{
+    HKQuantityType *bloodGlucoseType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierBloodGlucose];
+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:oid];
+    NSPredicate *uuidPredicate = [HKQuery predicateForObjectWithUUID:uuid];
+    [self.healthStore deleteObjectsOfType:bloodGlucoseType predicate:uuidPredicate withCompletion:^(BOOL success, NSUInteger deletedObjectCount, NSError * _Nullable error) {
+        if (!success) {
+            NSLog(@"An error occured while deleting the glucose sample %@. The error was: ", error);
+            callback(@[RCTMakeError(@"An error occured while deleting the glucose sample", error, nil)]);
+            return;
+        }
+        callback(@[[NSNull null], @(deletedObjectCount)]);
+    }];
+}
+
+- (void)results_deleteCarbohydratesSample:(NSString *)oid callback:(RCTResponseSenderBlock)callback
+{
+    HKQuantityType *carbohydratesType = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierDietaryCarbohydrates];
+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:oid];
+    NSPredicate *uuidPredicate = [HKQuery predicateForObjectWithUUID:uuid];
+    [self.healthStore deleteObjectsOfType:carbohydratesType predicate:uuidPredicate withCompletion:^(BOOL success, NSUInteger deletedObjectCount, NSError * _Nullable error) {
+        if (!success) {
+            NSLog(@"An error occured while deleting the carbohydrate sample %@. The error was: ", error);
+            callback(@[RCTMakeError(@"An error occured while deleting the carbohydrate sample", error, nil)]);
+            return;
+        }
+        callback(@[[NSNull null], @(deletedObjectCount)]);
     }];
 }
 

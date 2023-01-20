@@ -8,12 +8,11 @@
 
 #import "RCTAppleHealthKit.h"
 
+extern NSString * const kMetadataKey;
+
 @interface RCTAppleHealthKit (Utils)
 
-+ (NSUInteger)uintFromOptions:(NSDictionary *)options key:(NSString *)key withDefault:(NSUInteger)defaultValue;
-+ (double)doubleFromOptions:(NSDictionary *)options key:(NSString *)key withDefault:(double)defaultValue;
-+ (NSString *)stringFromOptions:(NSDictionary *)options key:(NSString *)key withDefault:(NSString *)defaultValue;
-+ (bool)boolFromOptions:(NSDictionary *)options key:(NSString *)key withDefault:(bool)defaultValue;
+
 
 + (NSMutableArray *)reverseNSMutableArray:(NSMutableArray *)array;
 

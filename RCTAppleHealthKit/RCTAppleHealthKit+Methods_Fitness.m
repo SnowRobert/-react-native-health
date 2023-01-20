@@ -37,7 +37,7 @@
                                     includeManuallyAdded:includeManuallyAdded
                                     day:date
                              completion:^(double value, NSDate *startDate, NSDate *endDate, NSError *error) {
-        if (!value && value != 0) {
+        if ((!value && value != 0) || error != nil) {
             callback(@[RCTJSErrorFromNSError(error)]);
             return;
         }
@@ -157,6 +157,32 @@
     }];
 }
 
+- (void)fitness_saveWalkingRunningDistance:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
+{
+    double distance = [RCTAppleHealthKit doubleValueFromOptions:input];
+    NSDate *startDate = [RCTAppleHealthKit dateFromOptions:input key:@"startDate" withDefault:nil];
+    NSDate *endDate = [RCTAppleHealthKit dateFromOptions:input key:@"endDate" withDefault:[NSDate date]];
+    HKUnit *unit = [RCTAppleHealthKit hkUnitFromOptions:input key:@"unit" withDefault:[HKUnit meterUnit]];
+
+    if(startDate == nil || endDate == nil){
+        callback(@[RCTMakeError(@"startDate and endDate are required in options", nil, nil)]);
+        return;
+    }
+
+    HKQuantity *quantity = [HKQuantity quantityWithUnit:unit doubleValue:distance];
+    HKQuantityType *type = [HKQuantityType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceWalkingRunning];
+    HKQuantitySample *sample = [HKQuantitySample quantitySampleWithType:type quantity:quantity startDate:startDate endDate:endDate];
+
+    [self.healthStore saveObject:sample withCompletion:^(BOOL success, NSError *error) {
+        if (!success) {
+            callback(@[RCTJSErrorFromNSError(error)]);
+            return;
+        }
+        callback(@[[NSNull null], @(distance)]);
+    }];
+}
+
+
 
 - (void)fitness_initializeStepEventObserver:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback
 {
@@ -176,8 +202,7 @@
              return;
          }
 
-          [self.bridge.eventDispatcher sendAppEventWithName:@"change:steps"
-                                                       body:@{@"name": @"change:steps"}];
+          [self sendEventWithName:@"change:steps" body:@{@"name": @"change:steps"}];
 
          // If you have subscribed for background updates you must call the completion handler here.
          // completionHandler();
@@ -198,7 +223,7 @@
     HKQuantityType *quantityType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceWalkingRunning];
 
     [self fetchSumOfSamplesOnDayForType:quantityType unit:unit includeManuallyAdded:includeManuallyAdded day:date completion:^(double distance, NSDate *startDate, NSDate *endDate, NSError *error) {
-        if (!distance && distance != 0) {
+        if ((!distance && distance != 0) || error != nil) {
             callback(@[RCTJSErrorFromNSError(error)]);
             return;
         }
@@ -257,7 +282,7 @@
     HKQuantityType *quantityType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceSwimming];
 
     [self fetchSumOfSamplesOnDayForType:quantityType unit:unit includeManuallyAdded:includeManuallyAdded day:date completion:^(double distance, NSDate *startDate, NSDate *endDate, NSError *error) {
-        if (!distance && distance != 0) {
+        if ((!distance && distance != 0) || error != nil) {
             callback(@[RCTJSErrorFromNSError(error)]);
             return;
         }
@@ -314,7 +339,7 @@
     HKQuantityType *quantityType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierDistanceCycling];
 
     [self fetchSumOfSamplesOnDayForType:quantityType unit:unit includeManuallyAdded:includeManuallyAdded day:date completion:^(double distance, NSDate *startDate, NSDate *endDate, NSError *error) {
-        if (!distance && distance != 0) {
+        if ((!distance && distance != 0) || error != nil) {
             callback(@[RCTJSErrorFromNSError(error)]);
             return;
         }
@@ -371,7 +396,7 @@
     HKQuantityType *quantityType = [HKObjectType quantityTypeForIdentifier:HKQuantityTypeIdentifierFlightsClimbed];
 
     [self fetchSumOfSamplesOnDayForType:quantityType unit:unit includeManuallyAdded:includeManuallyAdded day:date completion:^(double count, NSDate *startDate, NSDate *endDate, NSError *error) {
-        if (!count && count != 0) {
+        if ((!count && count != 0) || error != nil) {
             callback(@[RCTJSErrorFromNSError(error)]);
             return;
         }
@@ -445,6 +470,7 @@
  */
 - (void)fitness_registerObserver:(NSString *)type
                           bridge:(RCTBridge *)bridge
+                    hasListeners:(bool)hasListeners
 {
     HKSampleType *sampleType = [self.rnAppleHealthKit quantityTypeFrom:type];
     if (!sampleType) {
@@ -452,7 +478,7 @@
         return;
     }
 
-    [self setObserverForType:sampleType type:type bridge:bridge];
+    [self setObserverForType:sampleType type:type bridge:bridge hasListeners:hasListeners];
 }
 
 @end
