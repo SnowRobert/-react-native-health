@@ -785,6 +785,7 @@ RCT_EXPORT_METHOD(getClinicalRecords:(NSDictionary *)input callback:(RCTResponse
                        name:notificationName
                      object:nil];
         }
+
     self.hasListeners = YES;
 }
 
@@ -805,7 +806,9 @@ RCT_EXPORT_METHOD(getClinicalRecords:(NSDictionary *)input callback:(RCTResponse
 
 // Will be called when this module's last listener is removed, or on dealloc.
 -(void)stopObserving {
+
     self.hasListeners = NO;
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 

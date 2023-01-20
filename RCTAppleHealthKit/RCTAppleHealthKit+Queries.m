@@ -1062,6 +1062,7 @@
             return;
         }
 
+
         NSLog(@"Emitting event: %@", successEvent);
         [self emitEventWithName:successEvent andPayload:@{}];
 
@@ -1124,6 +1125,7 @@
 
         if(self.hasListeners) {
             [self emitEventWithName:successEvent andPayload:@{}];
+
         } else {
           NSLog(@"There is no listeners for %@", successEvent);
         }
@@ -1148,6 +1150,7 @@
         }
         NSLog(@"[HealthKit] Background delivery enabled for %@", type);
         [self.healthStore executeQuery:query];
+
           if(self.hasListeners) {
               NSLog(@"[HealthKit] Background observer set up for %@", type);
               [self emitEventWithName:successEvent andPayload:@{}];
