@@ -10,6 +10,8 @@
 #import "RCTAppleHealthKit+Utils.h"
 #import "RCTAppleHealthKit+Queries.h"
 
+#import "RNAppleHealthKit-Swift.h"
+
 @implementation RCTAppleHealthKit (Methods_Workout)
 
 
@@ -148,6 +150,6 @@
         callback(@[[NSNull null], [[workout UUID] UUIDString]]);
     };
 
-    [self.healthStore saveObject:workout withCompletion:completion];
+    [self.rnAppleHealthKit.healthStore saveObject:workout withCompletion:completion];
 }
 @end

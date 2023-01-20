@@ -15,10 +15,6 @@
 #import <React/RCTLog.h>
 #import <React/RCTEventDispatcher.h>
 
-@interface RCTAppleHealthKit : RCTEventEmitter <RCTBridgeModule>
-
-@property (nonatomic) HKHealthStore *healthStore;
-@property (nonatomic, assign) BOOL hasListeners;
 
 - (HKHealthStore *)_initializeHealthStore;
 - (void)isHealthKitAvailable:(RCTResponseSenderBlock)callback;

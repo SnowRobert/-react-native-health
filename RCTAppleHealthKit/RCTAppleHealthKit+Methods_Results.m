@@ -9,6 +9,8 @@
 #import "RCTAppleHealthKit+Queries.h"
 #import "RCTAppleHealthKit+Utils.h"
 
+#import "RNAppleHealthKit-Swift.h"
+
 @implementation RCTAppleHealthKit (Methods_Results)
 
 
@@ -98,7 +100,7 @@
                                                                        endDate:endDate
                                                                       metadata:metadata];
 
-    [self.healthStore saveObject:glucoseSample withCompletion:^(BOOL success, NSError *error) {
+    [self.rnAppleHealthKit.healthStore saveObject:glucoseSample withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
             NSLog(@"An error occured while saving the glucose sample %@. The error was: ", error);
             callback(@[RCTMakeError(@"An error occured while saving the glucose sample", error, nil)]);
@@ -124,7 +126,7 @@
                                                                     endDate:sampleDate
                                                                    metadata:metadata];
 
-    [self.healthStore saveObject:carbSample withCompletion:^(BOOL success, NSError *error) {
+    [self.rnAppleHealthKit.healthStore saveObject:carbSample withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
             NSLog(@"An error occured while saving the carbohydrate sample %@. The error was: ", error);
             callback(@[RCTMakeError(@"An error occured while saving the carbohydrate sample", error, nil)]);

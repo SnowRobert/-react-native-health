@@ -10,6 +10,8 @@
 #import "RCTAppleHealthKit+Queries.h"
 #import "RCTAppleHealthKit+Utils.h"
 
+#import "RNAppleHealthKit-Swift.h"
+
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventDispatcher.h>
 
@@ -467,7 +469,7 @@
                                                             objects:mySet
                                                             metadata:metadata];
     // Save the food correlation to HealthKit //
-    [self.healthStore saveObject:food withCompletion:^(BOOL success, NSError *error) {
+    [self.rnAppleHealthKit.healthStore saveObject:food withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
             NSLog(@"An error occured saving the food sample %@. The error was: ", error);
             callback(@[RCTMakeError(@"An error occured saving the food sample", error, nil)]);
@@ -489,7 +491,7 @@
                                                                 metadata:nil];
 
     // Save the water Sample to HealthKit //
-    [self.healthStore saveObject:water withCompletion:^(BOOL success, NSError *error) {
+    [self.rnAppleHealthKit.healthStore saveObject:water withCompletion:^(BOOL success, NSError *error) {
         if (!success) {
             NSLog(@"An error occured saving the water sample %@. The error was: ", error);
             callback(@[RCTMakeError(@"An error occured saving the water sample", error, nil)]);
