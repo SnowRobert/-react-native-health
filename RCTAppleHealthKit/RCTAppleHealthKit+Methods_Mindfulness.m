@@ -9,9 +9,6 @@
 #import "RCTAppleHealthKit+Queries.h"
 #import "RCTAppleHealthKit+Utils.h"
 
-#import "RNAppleHealthKit-Swift.h"
-
-@implementation RCTAppleHealthKit (Methods_Sleep)
 
 
 - (void)mindfulness_getMindfulSession:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback

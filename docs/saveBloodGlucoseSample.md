@@ -1,35 +1,44 @@
 # saveBloodGlucoseSample
 
-save a blood glucose value to Healthkit
+Save a blood glucose value to HealthKit.
 
-`saveBloodGlucoseSample` accepts an options object containing a percent value:
+`saveBloodGlucoseSample` accepts an options object containing glucose sample data and a callback:
 
-Example input options:
+Example input object:
 
 ```javascript
-let options = {
-    value: 16.7 // 16.7%
-    startDate: '2016-07-08T12:00:00.000-0400', // Optional, default now
-    unit: 'percent', // Optional, default is percent
+let input = {
+    value: 6.1, // 6.1 mmol/L
+    startDate: '2016-07-08T12:00:00.000-0400', // Optional, defaults to now
+    endDate: '2016-07-08T12:00:00.000-0400', // Optional, defaults to startDate
+    unit: 'mmolPerL', // Optional, defaults to mmolPerL
+    metadata: {
+      HKWasUserEntered: true,
+      HKBloodGlucoseMealTime: 1, // Preprandial = 1, Postprandial = 2
+      anyOtherKey: 'some data', // supports string, number, boolean
+    }
 }
 ```
 
-Call the method:
+Available units are: `'mmolPerL'`, `'mgPerdL'`.
+
+Example usage:
 
 ```javascript
 AppleHealthKit.saveBloodGlucoseSample(
-  (options: HealthInputOptions),
-  (err: Object, results: number) => {
+  input,
+  (err: Object, result: string) => {
     if (err) {
       return
     }
     // blood glucose successfully saved
+    console.log(result)
   },
 )
 ```
 
-Example output:
+Example output (record's UUID):
 
 ```json
-16.7
+"ba13089a-a311-4ffe-9352-f5c568936f16"
 ```
