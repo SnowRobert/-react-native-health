@@ -15,7 +15,6 @@
 #import <React/RCTLog.h>
 #import <React/RCTEventDispatcher.h>
 
-
 - (HKHealthStore *)_initializeHealthStore;
 - (void)isHealthKitAvailable:(RCTResponseSenderBlock)callback;
 - (void)initializeHealthKit:(NSDictionary *)input callback:(RCTResponseSenderBlock)callback;
